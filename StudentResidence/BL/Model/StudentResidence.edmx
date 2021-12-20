@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="StudentResidenceModel.Store" Provider="Npgsql" ProviderManifestToken="13.2" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="rooms">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int4" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="numberofroom" Type="int4" Nullable="false" />
+          <Property Name="seatscount" Type="int4" Nullable="false" />
+        </EntityType>
+        <EntityType Name="students">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int4" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="8000" Nullable="false" />
+          <Property Name="middlename" Type="varchar" MaxLength="8000" Nullable="false" />
+          <Property Name="surname" Type="varchar" MaxLength="8000" Nullable="false" />
+          <Property Name="birthday" Type="date" Nullable="false" />
+          <Property Name="phonenumber" Type="varchar" MaxLength="8000" />
+          <Property Name="course" Type="int4" Nullable="false" />
+          <Property Name="studentgroup" Type="varchar" MaxLength="8000" Nullable="false" />
+        </EntityType>
+        <EntityType Name="studentsrooms">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int4" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="room_id" Type="int4" Nullable="false" />
+          <Property Name="student_id" Type="int4" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'StudentResidence.public.users' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="users">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="user_name" />
+            <PropertyRef Name="password" />
+            <PropertyRef Name="role" />
+          </Key>
+          <Property Name="id" Type="int4" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="user_name" Type="varchar" MaxLength="8000" Nullable="false" />
+          <Property Name="password" Type="varchar" MaxLength="8000" Nullable="false" />
+          <Property Name="role" Type="varchar" MaxLength="8000" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'StudentResidence.public.show_students_without_room' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="show_students_without_room">
+          <Property Name="id" Type="int4" />
+          <Property Name="surname" Type="varchar" MaxLength="8000" />
+          <Property Name="name" Type="varchar" MaxLength="8000" />
+          <Property Name="middlename" Type="varchar" MaxLength="8000" />
+          <Property Name="birthday" Type="date" />
+          <Property Name="phonenumber" Type="varchar" MaxLength="8000" />
+          <Property Name="course" Type="int4" />
+          <Property Name="studentgroup" Type="varchar" MaxLength="8000" />
+        </EntityType>-->
+        <Association Name="studentsrooms_room_id_fkey">
+          <End Role="rooms" Type="Self.rooms" Multiplicity="1" />
+          <End Role="studentsrooms" Type="Self.studentsrooms" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="rooms">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="studentsrooms">
+              <PropertyRef Name="room_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="studentsrooms_student_id_fkey">
+          <End Role="students" Type="Self.students" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="studentsrooms" Type="Self.studentsrooms" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="students">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="studentsrooms">
+              <PropertyRef Name="student_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="StudentResidenceModelStoreContainer">
+          <EntitySet Name="rooms" EntityType="Self.rooms" Schema="public" store:Type="Tables" />
+          <EntitySet Name="students" EntityType="Self.students" Schema="public" store:Type="Tables" />
+          <EntitySet Name="studentsrooms" EntityType="Self.studentsrooms" Schema="public" store:Type="Tables" />
+          <EntitySet Name="users" EntityType="Self.users" store:Type="Tables" store:Schema="public">
+            <DefiningQuery>SELECT "users"."id", "users"."user_name", "users"."password", "users"."role" FROM "public"."users" AS "users"</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="studentsrooms_room_id_fkey" Association="Self.studentsrooms_room_id_fkey">
+            <End Role="rooms" EntitySet="rooms" />
+            <End Role="studentsrooms" EntitySet="studentsrooms" />
+          </AssociationSet>
+          <AssociationSet Name="studentsrooms_student_id_fkey" Association="Self.studentsrooms_student_id_fkey">
+            <End Role="students" EntitySet="students" />
+            <End Role="studentsrooms" EntitySet="studentsrooms" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="StudentResidenceModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="room">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="numberofroom" Type="Int32" Nullable="false" />
+          <Property Name="seatscount" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="studentsrooms" Relationship="Self.studentsrooms_room_id_fkey" FromRole="rooms" ToRole="studentsrooms" />
+        </EntityType>
+        <EntityType Name="student">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="8000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="middlename" Type="String" MaxLength="8000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="surname" Type="String" MaxLength="8000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="birthday" Type="DateTime" Precision="0" Nullable="false" />
+          <Property Name="phonenumber" Type="String" MaxLength="8000" FixedLength="false" Unicode="true" />
+          <Property Name="course" Type="Int32" Nullable="false" />
+          <Property Name="studentgroup" Type="String" MaxLength="8000" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="studentsrooms" Relationship="Self.studentsrooms_student_id_fkey" FromRole="students" ToRole="studentsrooms" />
+        </EntityType>
+        <EntityType Name="studentsroom">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="room_id" Type="Int32" Nullable="false" />
+          <Property Name="student_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="room" Relationship="Self.studentsrooms_room_id_fkey" FromRole="studentsrooms" ToRole="rooms" />
+          <NavigationProperty Name="student" Relationship="Self.studentsrooms_student_id_fkey" FromRole="studentsrooms" ToRole="students" />
+        </EntityType>
+        <EntityType Name="user">
+          <Key>
+            <PropertyRef Name="id" />
+            <PropertyRef Name="user_name" />
+            <PropertyRef Name="password" />
+            <PropertyRef Name="role" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="user_name" Type="String" MaxLength="8000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="password" Type="String" MaxLength="8000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="role" Type="String" MaxLength="8000" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <Association Name="studentsrooms_room_id_fkey">
+          <End Role="rooms" Type="Self.room" Multiplicity="1" />
+          <End Role="studentsrooms" Type="Self.studentsroom" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="rooms">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="studentsrooms">
+              <PropertyRef Name="room_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="studentsrooms_student_id_fkey">
+          <End Role="students" Type="Self.student" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="studentsrooms" Type="Self.studentsroom" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="students">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="studentsrooms">
+              <PropertyRef Name="student_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="rooms" EntityType="Self.room" />
+          <EntitySet Name="students" EntityType="Self.student" />
+          <EntitySet Name="studentsrooms" EntityType="Self.studentsroom" />
+          <EntitySet Name="users" EntityType="Self.user" />
+          <AssociationSet Name="studentsrooms_room_id_fkey" Association="Self.studentsrooms_room_id_fkey">
+            <End Role="rooms" EntitySet="rooms" />
+            <End Role="studentsrooms" EntitySet="studentsrooms" />
+          </AssociationSet>
+          <AssociationSet Name="studentsrooms_student_id_fkey" Association="Self.studentsrooms_student_id_fkey">
+            <End Role="students" EntitySet="students" />
+            <End Role="studentsrooms" EntitySet="studentsrooms" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="StudentResidenceModelStoreContainer" CdmEntityContainer="Entities">
+          <EntitySetMapping Name="rooms">
+            <EntityTypeMapping TypeName="StudentResidenceModel.room">
+              <MappingFragment StoreEntitySet="rooms">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="numberofroom" ColumnName="numberofroom" />
+                <ScalarProperty Name="seatscount" ColumnName="seatscount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="students">
+            <EntityTypeMapping TypeName="StudentResidenceModel.student">
+              <MappingFragment StoreEntitySet="students">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="middlename" ColumnName="middlename" />
+                <ScalarProperty Name="surname" ColumnName="surname" />
+                <ScalarProperty Name="birthday" ColumnName="birthday" />
+                <ScalarProperty Name="phonenumber" ColumnName="phonenumber" />
+                <ScalarProperty Name="course" ColumnName="course" />
+                <ScalarProperty Name="studentgroup" ColumnName="studentgroup" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="studentsrooms">
+            <EntityTypeMapping TypeName="StudentResidenceModel.studentsroom">
+              <MappingFragment StoreEntitySet="studentsrooms">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="room_id" ColumnName="room_id" />
+                <ScalarProperty Name="student_id" ColumnName="student_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="users">
+            <EntityTypeMapping TypeName="StudentResidenceModel.user">
+              <MappingFragment StoreEntitySet="users">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="user_name" ColumnName="user_name" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="role" ColumnName="role" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
